@@ -1,0 +1,35 @@
+{
+  "name": "msfrpc",
+  "version": "1.0.0",
+  "author": "Tomas Gonzalez Vivo",
+  "description": "Metasploit Framework RPC api and command line interface",
+  "keywords": [
+    "msfrpc",
+    "msfrpcd",
+    "metasploit",
+    "msf",
+    "rpc",
+    "api",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomasgvivo/node-msfrpc.git"
+  },
+  "engines": {
+    "node": ">=7.0.0"
+  },
+  "license": "Apache-2.0",
+  "main": "lib/msfrpc.js",
+  "bin": "./msfrpc-cli",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "decamelize": "^1.2.0",
+    "msgpack5": "^3.5.0",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {}
+}

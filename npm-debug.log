@@ -1,0 +1,116 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@3.10.8
+3 info using node@v7.0.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/home/tomas/Projects/Docker/msfrpc',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /home/tomas/.npm/msfrpc/1.0.0/package.tgz not in flight; packing
+9 verbose correctMkdir /home/tomas/.npm correctMkdir not in flight; initializing
+10 info lifecycle msfrpc@1.0.0~prepublish: msfrpc@1.0.0
+11 silly lifecycle msfrpc@1.0.0~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/home/tomas/.npm/msfrpc/1.0.0/package.tgz',
+12 verbose tar pack   '/home/tomas/Projects/Docker/msfrpc' ]
+13 verbose tarball /home/tomas/.npm/msfrpc/1.0.0/package.tgz
+14 verbose folder /home/tomas/Projects/Docker/msfrpc
+15 verbose addLocalTarball adding from inside cache /home/tomas/.npm/msfrpc/1.0.0/package.tgz
+16 verbose correctMkdir /home/tomas/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd msfrpc@1.0.0
+18 verbose afterAdd /home/tomas/.npm/msfrpc/1.0.0/package/package.json not in flight; writing
+19 verbose correctMkdir /home/tomas/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /home/tomas/.npm/msfrpc/1.0.0/package/package.json written
+21 silly publish { name: 'msfrpc',
+21 silly publish   version: '1.0.0',
+21 silly publish   author: { name: 'Tomas Gonzalez Vivo' },
+21 silly publish   description: 'Metasploit Framework RPC api and command line interface',
+21 silly publish   keywords: [ 'msfrpc', 'msfrpcd', 'metasploit', 'msf', 'rpc', 'api', 'cli' ],
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git+https://github.com/tomasgvivo/node-msfrpc.git' },
+21 silly publish   engines: { node: '>=7.0.0' },
+21 silly publish   license: 'Apache-2.0',
+21 silly publish   main: 'lib/msfrpc.js',
+21 silly publish   bin: { msfrpc: './msfrpc-cli' },
+21 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+21 silly publish   dependencies:
+21 silly publish    { bluebird: '^3.5.0',
+21 silly publish      decamelize: '^1.2.0',
+21 silly publish      'msfrpc-client-node': '^0.2.2',
+21 silly publish      msgpack5: '^3.5.0',
+21 silly publish      request: '^2.81.0' },
+21 silly publish   devDependencies: {},
+21 silly publish   readme: '![MsfRpc logo](./assets/logo.png)\n> The Metasploit RPC api for Node.js\n\n## Getting started\n\n### Installing\n\nThis will install the cli in your system.\n```shell\nnpm install -g msfrpc\n```\n\nThis will add the msfrpc module to your Node.js project.\n```shell\nnpm install --save msfrpc\n```\n\n### Using the cli\n\n```shell\nmsfrpc-cli <URI>\n```\n\nURI example: ```https://msfUser:123456@localhost:55553```\n\n### Using the api\n\nAll msfrpc methods are grouped in the following "method groups":\n* Auth\n* Base\n* Console\n* Core\n* Db\n* Job\n* Module\n* Plugin\n* Session\n\nTo call a msfrpc, use the following pattern:\n```\nmsfrpc.<method group>.<method name (camel case)>([arguments]);\n```\n\nAll methods returns Promises.\n\nPlease note that we don\'t pass tokens to the methods.\nTokens are added automatically by MsfRpc.\n\nHere is an example:\n```js\nconst MsfRpc = require(\'msfrpc\');\n\nconst msfrpcUri = \'https://msfUser:123456@localhost:55553\';\nconst msfrpc = new MsfRpc(msfrpcUri);\n\nconsole.log(`Connecting to ${msfrpcUri}`);\nmsfrpc.connect().then(() => {\n  return msfrpc.core.version().then((res) => {\n    console.log(`Metasploit Framework version ${res.version}`);\n  }).then(() => {\n    const keyword = \'windows\';\n    console.log(`Search modules containing "${keyword}". This may take a few seconds...`);\n    return msfrpc.module.search(keyword).then((modules) => {\n      console.log(`Found the ${modules.length} modules for "${keyword}":`);\n      modules.forEach((module) => {\n        console.log(\'=========\', module.fullname);\n        console.log(\'  Name\', module.name);\n        console.log(\'  Type\', module.type);\n        console.log(\'  Rank\', module.rank);\n        if(module.disclosuredate) {\n          console.log(\'  Date\', module.disclosuredate);\n        }\n      });\n    });\n  });\n});\n```\n\nIn the example, we:\n* Connect to the msfrpc server\n* Obtain and print the Metasploit Version\n* Find and print all modules containing a given keyword\n\n### Api Reference\n\nFor a list and documentation of all available methods, visit the following links.\n* http://www.nothink.org/metasploit/documentation/RemoteAPI_4.1.pdf\n* https://help.rapid7.com/metasploit/Content/api/rpc/overview.html\n* https://help.rapid7.com/metasploit/Content/api/rpc/standard-reference.html\n* https://rapid7.github.io/metasploit-framework/api/Msf/RPC.html\n\nHere are some examples of method calls:\n\nGet version information:\n```js\nmsfrpc.core.version()\n```\n\nGet module stats:\n```js\nmsfrpc.core.moduleStats()\n```\n\nSearch for a module:\n```js\nmsfrpc.module.search(\'keyword\')\n```\n\nList payloads:\n```js\nmsfrpc.module.payloads()\n```\n\n## Developing\n\n### Optional Prerequisites\nThis project includes a ```Dockerfile``` (and ```docker-compose.yml```) so you dont have to build a testing environment yourself.\nTo use docker, you need it installed in your system.\nFor installation, follow the steps [here](https://docs.docker.com/compose/install/).\n\n### Setting up Dev\n\nClone the repository and install dependencies.\n```shell\ngit clone https://github.com/tomasgvivo/node-msfrpc.git\ncd node-msfrpc/\nnpm install\n```\n\n## Licensing\n\nCopyright 2017 Tomas Gonzalez Vivo\n\nLicensed under the Apache License, Version 2.0 (the "License");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an "AS IS" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: 'b841f91e395121e7bcf9b447fceb9d188204c82f',
+21 silly publish   bugs: { url: 'https://github.com/tomasgvivo/node-msfrpc/issues' },
+21 silly publish   homepage: 'https://github.com/tomasgvivo/node-msfrpc#readme',
+21 silly publish   _id: 'msfrpc@1.0.0',
+21 silly publish   _shasum: 'fa68d848d563073e1692c0c7eeb6d99380cfd32b',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name msfrpc
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'msfrpc',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   escapedName: 'msfrpc',
+26 silly mapToRegistry   name: 'msfrpc',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/msfrpc
+28 verbose publish registryBase https://registry.npmjs.org/
+29 silly publish uploading /home/tomas/.npm/msfrpc/1.0.0/package.tgz
+30 verbose request uri https://registry.npmjs.org/msfrpc
+31 verbose request sending authorization for write operation
+32 info attempt registry request try #1 at 7:46:22 PM
+33 verbose request using bearer token for auth
+34 verbose request id 98c3a4a14eae8832
+35 http request PUT https://registry.npmjs.org/msfrpc
+36 http 403 https://registry.npmjs.org/msfrpc
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '95',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Sat, 29 Jul 2017 22:46:24 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-gig17031-GIG',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1501368383.031580,VS0,VE1162',
+37 verbose headers   vary: 'Accept-Encoding, Accept' }
+38 verbose request invalidating /home/tomas/.npm/registry.npmjs.org/msfrpc on PUT
+39 error publish Failed PUT 403
+40 verbose stack Error: "You cannot publish over the previously published version 1.0.0." : msfrpc
+40 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:302:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:290:14)
+40 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:210:14)
+40 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:187:22)
+40 verbose stack     at emitTwo (events.js:106:13)
+40 verbose stack     at Request.emit (events.js:191:7)
+40 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1044:10)
+40 verbose stack     at emitOne (events.js:96:13)
+40 verbose stack     at Request.emit (events.js:188:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:965:12)
+41 verbose statusCode 403
+42 verbose pkgid msfrpc
+43 verbose cwd /home/tomas/Projects/Docker/msfrpc
+44 error Linux 4.4.0-21-generic
+45 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+46 error node v7.0.0
+47 error npm  v3.10.8
+48 error code E403
+49 error "You cannot publish over the previously published version 1.0.0." : msfrpc
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]

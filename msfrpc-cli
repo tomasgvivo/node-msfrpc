@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+
+const MsfRpc = require('./lib/msfrpc');
+const readline = require('readline');
+const Promise = require('bluebird');
+const MsgPack5 = require('msgpack5');
+const msgpack = MsgPack5();
+const URL = require('url');
+
+const usage = `
+Usage: msfrpc <URI>
+
+URI example: https://msfUser:123456@localhost:55553
+`;
+
+try {
+  URL.parse(process.argv[2]);
+} catch(err) {
+  console.log(usage);
+  process.exit();
+}
+
+const msfrpc = new MsfRpc(process.argv[2]);
+
+msfrpc.connect().then(() => {
+  msfrpc.console.create().then((cli) => {
+    const cliId = cli.id;
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      terminal: true
+    });
+
+    const realHistory = rl.history;
+
+    function prompt(cli) {
+      delete rl.history;
+      rl.history = realHistory;
+      rl.question(cli.prompt.replace(/[^\x20-\x7E]+/g, ''), (input) => {
+        input = input.trim();
+        if(input === 'history') {
+          console.log(realHistory.join('\n'));
+          prompt(cli);
+        } else if(input === 'exit') {
+          process.exit();
+        } else {
+          msfrpc.console.write(cliId, input + '\n').then(() => {
+            rl.pause();
+            read();
+          });
+        }
+      });
+    }
+
+    function read() {
+      rl.history = [];
+      return msfrpc.console.read(cli.id).then((cli) => {
+        rl.write(cli.data);
+        if(cli.busy) {
+          return Promise.delay(1000).then(read);
+        } else {
+          rl.resume();
+          prompt(cli);
+        }
+      });
+    }
+
+    read();
+
+  });
+});
