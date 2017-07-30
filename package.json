@@ -1,6 +1,6 @@
 {
   "name": "msfrpc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Tomas Gonzalez Vivo",
   "description": "Metasploit Framework RPC api and command line interface",
   "keywords": [

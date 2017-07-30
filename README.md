@@ -18,7 +18,7 @@ npm install --save msfrpc
 ### Using the cli
 
 ```shell
-msfrpc-cli <URI>
+msfrpc <URI>
 ```
 
 URI example: ```https://msfUser:123456@localhost:55553```
